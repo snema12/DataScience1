@@ -1,0 +1,90 @@
+---
+title: "Twitter sentiment analysis R"
+author: "Swapnil Nema"
+date: "18 September 2018"
+output: html_document
+Reference: https://datahack.analyticsvidhya.com/contest/practice-problem-twitter-sentiment-analysis/
+https://rpubs.com/shivanireddy/Sentiment_Analysis
+
+Problem Statement: The objective of this task is to detect hate speech in tweets. For the sake of simplicity, we say a tweet contains hate speech if it has a racist or sexist sentiment associated with it. So, the task is to classify racist or sexist tweets from other tweets.
+
+Note: The evaluation metric from this practice problem is F1-Score.
+
+---
+
+```{r}
+# setwd("C:/Users/User/Desktop/Learning_Personal/AV/Twitter sentiment analysis")
+# ##install the necessary packages
+# install.packages("readr")
+# install.packages("plyr")
+# install.packages("stringr")
+# install.packages("stringi")
+# install.packages("magrittr")
+# install.packages("dplyr")
+# install.packages('tm')
+# install.packages('RColorBrewer')
+# install.packages('wordcloud')
+
+library("readr")
+library("plyr")
+library("stringr")
+library("stringi")
+library("magrittr")
+library("dplyr")
+library('tm')
+library('RColorBrewer')
+library('wordcloud')
+
+
+```
+
+```{r}
+##Clean data
+gc()
+twitter_av <- read.csv("train Twitter sentiment.csv", row.names=1, sep=",")
+
+av_tweets <- twitter_av$tweet
+
+#********************************************
+#         Clean tweets
+#********************************************
+#use this function to clean the tweets
+clean.text = function(x)
+{
+  # tolower
+  x = tolower(x)
+  # remove rt
+  x = gsub("rt", "", x)
+  # remove at
+  x = gsub("@\\w+", "", x)
+  # remove punctuation
+  x = gsub("[[:punct:]]", "", x)
+  # remove numbers
+  x = gsub("[[:digit:]]", "", x)
+  # remove links http
+  x = gsub("http\\w+", "", x)
+  # remove tabs
+  x = gsub("[ |\t]{2,}", "", x)
+  # remove blank spaces at the beginning
+  x = gsub("^ ", "", x)
+  # remove blank spaces at the end
+  x = gsub(" $", "", x)
+  return(x)
+}
+
+# clean tweets
+av_tweets_clean = cbind(twitter_av$label,as.data.frame(clean.text(av_tweets)),twitter_av$tweet)
+
+
+```
+
+```{r Sentiment Analysis}
+pos.words = scan('positive-words.txt', what='character', comment.char=';')
+neg.words = scan('negative-words.txt', what='character', comment.char=';')
+
+neg.words = c(neg.words, 'wtf', 'fail')
+
+```
+
+
+
